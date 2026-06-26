@@ -68,6 +68,22 @@ def obtener_actividad():
             return actividad
         print(f"Actividad inválida. Opciones válidas: {', '.join(ACTIVIDADES_VALIDAS)}")
 
+
+def dni_ya_registrado(dni: int) -> bool:
+    """Devuelve True si el DNI ya existe en el archivo de usuarios"""
+    if not os.path.exists(ArchSal):
+        return False
+
+    with open(ArchSal, "rb") as f:
+        while True:
+            try:
+                user = pickle.load(f)
+            except EOFError:
+                break
+            if user.ID == dni:
+                return True
+    return False
+
 # ==========================================
 # FUNCIÓN DE CONTROL DE ESPACIO
 # ==========================================
@@ -147,6 +163,10 @@ while Sistema:
         usuario_nuevo = Usuario()
         
         usuario_nuevo.ID = obtener_entero("¿DNI del usuario? ")
+        if dni_ya_registrado(usuario_nuevo.ID):
+            print("Ese DNI ya está registrado. No se puede registrar dos veces al mismo usuario.")
+            continue
+
         usuario_nuevo.Nombre = obtener_texto_no_vacio("¿Nombre y Apellido? ")
         usuario_nuevo.Edad = obtener_entero("¿Edad del usuario? ")
         usuario_nuevo.Plan = obtener_plan()
