@@ -25,6 +25,50 @@ class ActividadEstructura:
 Actividad = ActividadEstructura()
 
 # ==========================================
+# FUNCIONES DE VALIDACIÓN
+# ==========================================
+
+ACTIVIDADES_VALIDAS = ["Zumba", "CrossFit", "Yoga", "Gym"]
+PLANES_VALIDOS = ["Mensual", "Semanal"]
+
+def obtener_entero(mensaje):
+    """Obtiene un entero válido del usuario con manejo de errores"""
+    while True:
+        try:
+            return int(input(mensaje))
+        except ValueError:
+            print("Por favor, ingrese un número válido.")
+
+def obtener_texto_no_vacio(mensaje):
+    """Obtiene texto no vacío del usuario"""
+    while True:
+        texto = input(mensaje).strip()
+        if texto:
+            return texto
+        print("Este campo no puede estar vacío.")
+
+def obtener_plan():
+    """Obtiene un plan válido del usuario"""
+    while True:
+        plan = input("¿Que tipo de plan desea adquirir?, Mensual (40.000), Semanal (10.000): ").strip().capitalize()
+        if plan in PLANES_VALIDOS:
+            return plan
+        print(f"Plan inválido. Opciones válidas: {', '.join(PLANES_VALIDOS)}")
+
+def obtener_actividad():
+    """Obtiene una actividad válida del usuario"""
+    print("\n--- Actividades disponibles ---")
+    for i, act in enumerate(ACTIVIDADES_VALIDAS, 1):
+        print(f"  [{i}] {act}")
+    print("-------------------------------")
+    
+    while True:
+        actividad = input("¿A que actividad desea inscribirse?: ").strip().capitalize()
+        if actividad in ACTIVIDADES_VALIDAS:
+            return actividad
+        print(f"Actividad inválida. Opciones válidas: {', '.join(ACTIVIDADES_VALIDAS)}")
+
+# ==========================================
 # FUNCIÓN DE CONTROL DE ESPACIO
 # ==========================================
 def Hay_Espacio(x: str) -> bool:
@@ -102,10 +146,10 @@ while Sistema:
         # Se crea un nuevo objeto usuario vacío en memoria
         usuario_nuevo = Usuario()
         
-        usuario_nuevo.ID = int(input("¿DNI del usuario? "))
-        usuario_nuevo.Nombre = input("¿Nombre y Apellido? ")
-        usuario_nuevo.Edad = int(input("¿Edad del usuario? "))
-        usuario_nuevo.Plan = input("¿Que tipo de plan desea adquirir?, Mensual (40.000), Semanal (10.000): ")
+        usuario_nuevo.ID = obtener_entero("¿DNI del usuario? ")
+        usuario_nuevo.Nombre = obtener_texto_no_vacio("¿Nombre y Apellido? ")
+        usuario_nuevo.Edad = obtener_entero("¿Edad del usuario? ")
+        usuario_nuevo.Plan = obtener_plan()
         
         print("Bien, se registrará en su factura")
         
@@ -113,25 +157,25 @@ while Sistema:
             if usuario_nuevo.Plan == "Mensual":
                 Pago = Mensual * 0.80
                 Cont_Mensual += 1
-            if usuario_nuevo.Plan == "Semanal":
+            elif usuario_nuevo.Plan == "Semanal":
                 Pago = Semanal * 0.80
                 Cont_Semanal += 1
         else:
             if usuario_nuevo.Plan == "Mensual":
                 Cont_Mensual += 1
                 Pago = Mensual
-            if usuario_nuevo.Plan == "Semanal":
+            elif usuario_nuevo.Plan == "Semanal":
                 Cont_Semanal += 1
                 Pago = Semanal
                 
-        Act = input("¿A que actividad desea inscribirse? ")
+        Act = obtener_actividad()
         Reg_Comp = False
         
         if Hay_Espacio(Act):
             usuario_nuevo.Actividades = Act
             Reg_Comp = True
         else:
-            Act = input("¿No hay espacio en esta actividad, elija otra: ")
+            Act = obtener_actividad()
             if Hay_Espacio(Act):
                 usuario_nuevo.Actividades = Act
                 Reg_Comp = True
@@ -158,7 +202,7 @@ while Sistema:
             print("Registro Cancelado")
 
     elif Opcion == 2:
-        id_buscar = int(input("Escriba DNI del Usuario: "))
+        id_buscar = obtener_entero("Escriba DNI del Usuario: ")
         Encontrado = False
         
         # Leemos secuencialmente los objetos del archivo
@@ -189,7 +233,7 @@ while Sistema:
             print("Usuario no encontrado o no verificado.")
 
     elif Opcion == 3:
-        id_buscar = int(input("Escriba DNI del Usuario: "))
+        id_buscar = obtener_entero("Escriba DNI del Usuario: ")
         Encontrado = False
         usuarios_actualizados = []
         
